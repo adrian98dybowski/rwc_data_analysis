@@ -45,27 +45,25 @@ ui <- fluidPage(
     
     sidebarPanel(
       
-      checkboxGroupInput(inputId = "selectYear",
-                         label = "RWC Edition",
-                         choices = rev(seq(1987, 2019, 4)),
-                         selected = "2019"),
-      actionButton("getDataFromServer", "Upload data"),
+      selectInput(inputId = "year",
+                  label = "RWC Edition",
+                  multiple = FALSE,
+                  choices = rev(seq(1987, 2019, 4)),
+                  selected = "2019"),
       
-      selectInput(
-        "country",
-        "Choose country",
-        multiple = TRUE,
-        choices = as.vector(sort(unique(rwc$country)), mode="list"),
-        selected = " "
+      selectInput(inputId = "country",
+                  label = "Country",
+                  multiple = TRUE,
+                  choices = as.vector(sort(unique(rwc$country)), mode="list"),
+                  selected = " "
       ),
     ),
     
 
     mainPanel(
       tabsetPanel(type = "tabs",
-                  tabPanel("Start", verbatimTextOutput("start")),
+                  tabPanel("Participants map",htmlOutput("map")),
                   tabPanel("Tabela roczna", DT::dataTableOutput("edition")),
-                  tabPanel("Mapa walut",htmlOutput("view")),
                   tabPanel("Szeregi czasowe",plotlyOutput("szereg"))
                   #tabPanel("Scatter plot",plotlyOutput("scatter")),
                   #tabPanel("Histogram",plotlyOutput("histogram")),
@@ -97,25 +95,27 @@ server <- function(input, output) {
     selectYearVar = "2019"
   )
   
-  observeEvent(input$selectYear,{
-    outVar$selectYearVar <- input$selectYear
+  observeEvent(input$year,{
+    outVar$selectYearVar <- input$year
   })
   
   data <- reactive({rwc})
   
-  #START#
-  output$start <- renderText({
-    "                      Witaj w aplikacji KURSY WALUT
+  # MAP #
+  
+  data_map <- reactive({
+    map <- rwc
+    map[, rank := NULL]
     
+    map <- map[map$year %in% input$year]
+  })
+  
+  output$map <- renderGvis({
     
-              1. Zaimportuj dane
-              2. Wybierz w okienkach po jednej dowolnej walucie
-              3. Przejdz do wybranej zakladki
+    gvisGeoChart(data_map(), locationvar="country",
+                 options=list(
+                   width=550, height=550))
     
-           UWAGA! 
-           Waluta LTL dostepna tylko dla roku 2013, 
-           natomiast waluta LVL dla lat 2013-2014
-           (potem zamienione na euro)."
   })
   
   #TABELA ROCZNA#
@@ -147,3 +147,4 @@ server <- function(input, output) {
 
 
 shinyApp(ui = ui, server = server)
+
