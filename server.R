@@ -4,21 +4,12 @@ shinyServer(function(session, input, output) {
   
 # MAP #
 
- data_map <- reactive({
-   map <- rwc
-   map[, rank := NULL]
-   map <- map[, country := ifelse(country %in% 
-                                    c("England", "Wales", "Scotland"), 
-                                  "United Kingdom", country)]
-  
-  map <- map[map$year %in% input$edition]
+observeEvent(input$edition, {
+output$map <- prepare_map(data = copy(rwc), edition = input$edition)
 })
 
-output$map <- renderGvis({
-  
-  gvisGeoChart(data_map(), locationvar= "country",
-               options=list(
-                 width=1075, height=550))
-  
-})
+# TABLE
+
+output$table <- history_table(data = copy(rwc))
+
 })
