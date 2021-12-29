@@ -12,5 +12,8 @@ TABS <<- tabPanel("Participants",
                                                         selected = "2019")
                                             )),
                          
-                                    htmlOutput("map")
+                                    htmlOutput("map"),
+                  
+                  
+                                    DTOutput("edition_table")
                                         )

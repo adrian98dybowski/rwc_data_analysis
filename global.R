@@ -28,6 +28,7 @@ rwc[, rank := ifelse(position == "Pool stage", 6,
                             ifelse(position == "Fourth place", 4, 
                                    ifelse(position == "Third place", 3,
                                           ifelse(position == "Runner-up", 2, 1)))))]
+
 # Data to filters
 
 EDITION <<- unique(rwc$year) 
@@ -38,4 +39,7 @@ POSITION <<- unique(rwc$position)
 # Functions to server
 
 source("functions/prepare_map.R")
+source("functions/edition_table.R")
 source("functions/history_table.R")
+source("functions/prepare_comparison.R")
+
