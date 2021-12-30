@@ -22,8 +22,9 @@ edition_table <- function(data, edition){
   ) %>%
       formatStyle("Position", 
                   backgroundColor = styleEqual(
-                    c("Champion", "Runner-up", "Third place"), 
-                    c("gold", "silver", "brown")))
+                    c("Champion", "Runner-up", "Third place", "Fourth place", 
+                      "Quater-finals", "Pool stage"), 
+                    c("gold", "silver", "brown", "cyan", "cornsilk", "coral")))
     
   }, server = FALSE
   )
